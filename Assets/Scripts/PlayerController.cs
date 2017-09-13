@@ -50,15 +50,6 @@ public class PlayerController : MonoBehaviour
         rb.transform.Translate(dir);
     }
 
-    void Update()
-    {
-
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            Application.Quit();
-        }
-    }
-
     // When this game object intersects a collider with 'is trigger' checked, 
     // store a reference to that collider in a variable named 'other'..
     void OnTriggerEnter(Collider other)
