@@ -4,6 +4,7 @@
 using UnityEngine.UI;
 
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -14,11 +15,18 @@ public class PlayerController : MonoBehaviour
     private Rigidbody rb;
     private int count;
 
+    private string currentLevelKey = "currentLevel";
+
+    public static int currentLevel = 1;
+
+    private int[] currentLevelGems = { 12, 15 };
+
     void Main()
     {
         // Preventing mobile devices going in to sleep mode 
         //(actual problem if only accelerometer input is used)
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
+        PlayerPrefs.SetInt(currentLevelKey, currentLevel);
     }
 
     // At the start of the game..
@@ -26,6 +34,7 @@ public class PlayerController : MonoBehaviour
     {
         // Assign the Rigidbody component to our private rb variable
         rb = GetComponent<Rigidbody>();
+        rb.freezeRotation = true;
 
         // Set the count to zero 
         count = 0;
@@ -48,6 +57,7 @@ public class PlayerController : MonoBehaviour
 
         dir *= Time.deltaTime * speed;
         rb.transform.Translate(dir);
+        rb.transform.Rotate(new Vector3(0, 0, 0));
     }
 
     // When this game object intersects a collider with 'is trigger' checked, 
@@ -74,12 +84,31 @@ public class PlayerController : MonoBehaviour
         // Update the text field of our 'countText' variable
         countText.text = "Count: " + count.ToString();
 
-        // Check if our 'count' is equal to or exceeded 12
-        if (count >= 12)
+        currentLevel = PlayerPrefs.GetInt(currentLevelKey);
+        if (count >= currentLevelGems[currentLevel - 1])
         {
             // Set the text value of our 'winText'
-            winText.text = "You Win!";
+            StartCoroutine(LevelComplete());
         }
     }
 
+    IEnumerator LevelComplete()
+    {
+
+        currentLevel = currentLevel + 1;
+        if (currentLevel > currentLevelGems.Length)
+        {
+            winText.text = "Game complete! Exiting ...";
+            yield return new WaitForSeconds(3);
+            Application.Quit();
+        }
+        else
+        {
+            winText.text = "You Win! Loading next level ...";
+            yield return new WaitForSeconds(3);
+            PlayerPrefs.SetInt(currentLevelKey, currentLevel);
+            SceneManager.LoadScene(currentLevel);
+        }
+
+    }
 }
