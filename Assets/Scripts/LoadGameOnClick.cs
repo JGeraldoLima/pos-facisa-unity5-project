@@ -6,9 +6,8 @@ using UnityEngine.SceneManagement;
 public class LoadGameOnClick : MonoBehaviour
 {
 
-    public void LoadSceneByIndex(int index)
+    public void LoadGame()
     {
-        Debug.Log("LOADING");
-        SceneManager.LoadScene(index);
+        SceneManager.LoadScene(1);
     }
 }
