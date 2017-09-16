@@ -9,15 +9,22 @@ using UnityEngine.SceneManagement;
 public class PlayerController : MonoBehaviour
 {
     public float speed;
+
+    /* Text objects */
     public Text playerGemsText;
     public Text winText;
 
     public Text countdownText;
 
+    public Text playerRefillsText;
+
     private Rigidbody rb;
 
+    /* Controller internal control variables */
     private int levelGems;
     private int playerGems;
+
+    private int playerRefills;
 
     private string currentLevelKey = "currentLevel";
 
@@ -25,7 +32,13 @@ public class PlayerController : MonoBehaviour
 
     private float remainingLevelTime = 0;
 
-    private float[] currentLevelTimeouts = { 40f, 60f };
+    private int currentLevelMod = 0;
+
+    private float[] currentLevelTimeouts = { 20f, 40f };
+
+    private float[] currentLevelTimeRefill = { 5f, 10f };
+
+    private int[] currentLevelTimeRefillMod = { 6, 8 };
 
     private int[] currentLevelGems = { 12, 15 };
 
@@ -45,7 +58,9 @@ public class PlayerController : MonoBehaviour
         rb.freezeRotation = true;
 
         playerGems = 0;
+        playerRefills = 0;
         levelGems = currentLevelGems[currentLevel - 1];
+        currentLevelMod = currentLevelTimeRefillMod[currentLevel - 1];
         remainingLevelTime = currentLevelTimeouts[currentLevel - 1];
 
         SetPlayerGemsText();
@@ -90,9 +105,26 @@ public class PlayerController : MonoBehaviour
             other.gameObject.SetActive(false);
 
             playerGems = playerGems + 1;
-
             SetPlayerGemsText();
+
+            if (playerGems % currentLevelMod == 0)
+            {
+                playerRefills = playerRefills + 1;
+                playerRefillsText.text = "Time refills: " + playerRefills.ToString();
+            }
+
+            
         }
+    }
+
+    public void OnClickRefill()
+    {
+        if (playerRefills > 0) {
+            remainingLevelTime += currentLevelMod;
+            playerRefills -= 1;
+            playerRefillsText.text = "Time refills: " + playerRefills.ToString();
+        }
+
     }
 
     void SetPlayerGemsText()
