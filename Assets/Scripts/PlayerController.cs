@@ -34,9 +34,13 @@ public class PlayerController : MonoBehaviour
 
     private int currentLevelMod = 0;
 
-    private float[] currentLevelTimeouts = { 20f, 40f };
+    private int currentLevelHitRate = 0;
+
+    private float[] currentLevelTimeouts = { 30f, 40f };
 
     private float[] currentLevelTimeRefill = { 5f, 10f };
+
+    private int[] currentLevelHitRates = { 0, 5 };
 
     private int[] currentLevelTimeRefillMod = { 6, 8 };
 
@@ -61,6 +65,7 @@ public class PlayerController : MonoBehaviour
         playerRefills = 0;
         levelGems = currentLevelGems[currentLevel - 1];
         currentLevelMod = currentLevelTimeRefillMod[currentLevel - 1];
+        currentLevelHitRate = currentLevelHitRates[currentLevel - 1];
         remainingLevelTime = currentLevelTimeouts[currentLevel - 1];
 
         SetPlayerGemsText();
@@ -109,17 +114,27 @@ public class PlayerController : MonoBehaviour
 
             if (playerGems % currentLevelMod == 0)
             {
-                playerRefills = playerRefills + 1;
+                playerRefills += 1;
                 playerRefillsText.text = "Time refills: " + playerRefills.ToString();
             }
 
-            
+
+        }
+
+    }
+
+    void OnCollisionEnter(Collision col)
+    {
+        if (col.gameObject.CompareTag("Obstacle"))
+        {
+            remainingLevelTime -= currentLevelHitRate;
         }
     }
 
     public void OnClickRefill()
     {
-        if (playerRefills > 0) {
+        if (playerRefills > 0)
+        {
             remainingLevelTime += currentLevelMod;
             playerRefills -= 1;
             playerRefillsText.text = "Time refills: " + playerRefills.ToString();
@@ -140,7 +155,7 @@ public class PlayerController : MonoBehaviour
     IEnumerator LevelComplete()
     {
 
-        currentLevel = currentLevel + 1;
+        currentLevel += 1;
         if (currentLevel > currentLevelGems.Length)
         {
             winText.text = "Game complete! Exiting ...";
