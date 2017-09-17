@@ -36,15 +36,15 @@ public class PlayerController : MonoBehaviour
 
     private int currentLevelHitRate = 0;
 
-    private float[] currentLevelTimeouts = { 30f, 40f };
+    private float[] currentLevelTimeouts = { 30f, 40f, 35f };
 
-    private float[] currentLevelTimeRefill = { 5f, 10f };
+    private float[] currentLevelTimeRefill = { 5f, 10f, 0 };
 
-    private int[] currentLevelHitRates = { 0, 5 };
+    private int[] currentLevelHitRates = { 0, 5, 0 };
 
-    private int[] currentLevelTimeRefillMod = { 6, 8 };
+    private int[] currentLevelTimeRefillMod = { 6, 8, 4 };
 
-    private int[] currentLevelGems = { 12, 15 };
+    private int[] currentLevelGems = { 12, 15, 13 };
 
     private Coroutine gameOverCoroutine;
 
@@ -78,7 +78,7 @@ public class PlayerController : MonoBehaviour
         remainingLevelTime -= Time.deltaTime;
         if (remainingLevelTime < 0 && playerGems < levelGems)
         {
-            gameOverCoroutine = StartCoroutine(GameOver());
+            gameOverCoroutine = StartCoroutine(GameOver("You ran of time!"));
         }
         else if (remainingLevelTime >= 0 && playerGems < levelGems)
         {
@@ -129,6 +129,10 @@ public class PlayerController : MonoBehaviour
         {
             remainingLevelTime -= currentLevelHitRate;
         }
+        else if (col.gameObject.CompareTag("DeathPillar"))
+        {
+            gameOverCoroutine = StartCoroutine(GameOver("You've just died!"));
+        }
     }
 
     public void OnClickRefill()
@@ -158,9 +162,12 @@ public class PlayerController : MonoBehaviour
         currentLevel += 1;
         if (currentLevel > currentLevelGems.Length)
         {
-            winText.text = "Game complete! Exiting ...";
+            winText.text = "Game complete! Congratulations!";
+            currentLevel = 1;
+            playerGems = 0;
+            playerRefills = 0;
             yield return new WaitForSeconds(3);
-            Application.Quit();
+            SceneManager.LoadScene(0);
         }
         else
         {
@@ -171,9 +178,12 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    IEnumerator GameOver()
+    IEnumerator GameOver(string gameOverText)
     {
-        winText.text = "You ran of time!";
+        currentLevel = 1;
+        playerGems = 0;
+        playerRefills = 0;
+        winText.text = gameOverText;
         yield return new WaitForSeconds(3);
         SceneManager.LoadScene(0);
     }
