@@ -1,21 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PauseOnClick : MonoBehaviour
 {
+    public Transform pauseMenu;
 
     public void Pause()
     {
-        // make main menu appears ('start' comes 'continue')
-        if (Time.timeScale == 1)
-        {
-            Time.timeScale = 0;
-        }
-        else
-        {
-            Time.timeScale = 1;
-        }
+        pauseMenu.gameObject.SetActive(true);
+        Time.timeScale = 0;
+    }
 
+    public void ResumeGame()
+    {
+        pauseMenu.gameObject.SetActive(false);
+        Time.timeScale = 1;
+    }
+
+    public void BackToMainMenu()
+    {
+        SceneManager.LoadScene(0);
     }
 }
