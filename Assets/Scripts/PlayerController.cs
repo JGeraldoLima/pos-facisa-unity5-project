@@ -36,15 +36,15 @@ public class PlayerController : MonoBehaviour
 
     private int currentLevelHitRate = 0;
 
-    private float[] currentLevelTimeouts = { 30f, 40f, 35f };
+    private float[] currentLevelTimeouts = { 25f, 40f, 30f, 40f };
 
-    private float[] currentLevelTimeRefill = { 5f, 10f, 0 };
+    private float[] currentLevelTimeRefill = { 5f, 5f, 5f, 5f };
 
-    private int[] currentLevelHitRates = { 0, 5, 0 };
+    private int[] currentLevelHitRates = { 0, 5, 0, 0 };
 
-    private int[] currentLevelTimeRefillMod = { 6, 8, 4 };
+    private int[] currentLevelTimeRefillMod = { 6, 8, 11, 10 };
 
-    private int[] currentLevelGems = { 12, 15, 13 };
+    private int[] currentLevelGems = { 12, 15, 13, 15 };
 
     private Coroutine gameOverCoroutine;
 
@@ -71,6 +71,7 @@ public class PlayerController : MonoBehaviour
         SetPlayerGemsText();
 
         winText.text = "";
+        Time.timeScale = 1;
     }
 
     void Update()
@@ -86,6 +87,8 @@ public class PlayerController : MonoBehaviour
             int seconds = Mathf.FloorToInt(remainingLevelTime - minutes * 60);
 
             countdownText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+
+
         }
     }
 
@@ -139,7 +142,7 @@ public class PlayerController : MonoBehaviour
     {
         if (playerRefills > 0)
         {
-            remainingLevelTime += currentLevelMod;
+            remainingLevelTime += currentLevelTimeRefill[currentLevel - 1];
             playerRefills -= 1;
             playerRefillsText.text = "Time refills: " + playerRefills.ToString();
         }
