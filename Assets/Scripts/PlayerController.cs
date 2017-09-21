@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
 
     private int currentLevelHitRate = 0;
 
-    private float[] currentLevelTimeouts = { 25f, 40f, 30f, 40f };
+    private float[] currentLevelTimeouts = { 15f, 20f, 20f, 30f };
 
     private float[] currentLevelTimeRefill = { 5f, 5f, 5f, 5f };
 
@@ -95,9 +95,16 @@ public class PlayerController : MonoBehaviour
     // Each physics step..
     void FixedUpdate()
     {
+
         Vector3 dir = Vector3.zero;
-        dir.x = Input.acceleration.x;
-        dir.z = -Input.acceleration.z;
+        var reading = Input.acceleration;
+    
+        var y  = reading.y;
+
+        if (y > 0) y *= 5;
+        dir.z = y;
+        dir.x = reading.x;
+        
         if (dir.sqrMagnitude > 1)
             dir.Normalize();
 
@@ -132,7 +139,7 @@ public class PlayerController : MonoBehaviour
         {
             remainingLevelTime -= currentLevelHitRate;
         }
-        else if (col.gameObject.CompareTag("DeathPillar"))
+        else if (col.gameObject.CompareTag("DeathPillar") && levelCompletedCoroutine == null)
         {
             gameOverCoroutine = StartCoroutine(GameOver("You've just died!"));
         }
